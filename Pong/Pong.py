@@ -1,4 +1,5 @@
 import pyxel
+import math
 
 
 class App:
@@ -36,6 +37,10 @@ class App:
             self.player_paddle.y -= self.paddle_speed
 
         # ball movement
+        self.ball.update()
+
+        # collision
+
     def draw(self):
         pyxel.cls(0)
         self.player_paddle.draw()
@@ -61,11 +66,27 @@ class Ball:
         self.y = y
         self.rad = r
 
-        self.vel_x = 1
+        self.vel_x = 0
         self.vel_y = 1
 
     def draw(self):
         pyxel.circ(self.x, self.y, self.rad, 7)
+
+    def update(self):
+        self.x += self.vel_x
+        self.y += self.vel_y
+
+
+def line_circle_collision(x1, x2, y1, y2, circ_x, circ_y, circ_rad):
+    distX = x1 - x2
+    distY = y1 - y2
+    line_len = math.sqrt((distX**2) + (distY**2))
+
+    dot = (((circ_x - x1) * (x2 - x1)) + (circ_y - y1) * (y2 - y1)) \
+        / line_len**2
+
+    closestX = x1 + (dot * (x2 - x1))
+    closestY = y1 + (dot * (y2 - y1))
 
 
 App()
