@@ -38,38 +38,64 @@ class App:
 
         # ball movement
         curr_x_vel = self.ball.vel_x  # total number of movements we can make
-        # this tick
+        # this tick based on the velocity
         curr_y_vel = self.ball.vel_y
 
-        while curr_x_vel > 0 or curr_y_vel > 0:
-            new_ball_pos = self.ball.get_next_pos()
-            # check collision with bottom of screen
-
+        while curr_x_vel != 0 or curr_y_vel != 0:
             x_vel = 0  # number we will move
             if curr_x_vel > 0:
                 curr_x_vel -= 1
                 x_vel = 1
+            elif curr_x_vel < 0:
+                curr_x_vel += 1
+                x_vel = -1
 
             y_vel = 0  # number we will move
             if curr_y_vel > 0:
                 curr_y_vel -= 1
                 y_vel = 1
+            elif curr_y_vel < 0:
+                curr_y_vel += 1
+                y_vel = -1
 
-            if line_circle(0 - self.ball.vel_x, pyxel.height,
-                           pyxel.width + self.ball.vel_x,
-                           pyxel.height + self.ball.vel_y,
-                           new_ball_pos[0], new_ball_pos[1], self.ball.rad):
+            new_ball_pos = self.ball.get_next_pos(x_vel, y_vel)
+
+            collision_statement = "No collision"
+
+            # check collision with bottom of screen
+            if line_circle(0, pyxel.height, pyxel.width, pyxel.height,
+                           new_ball_pos[0], new_ball_pos[1], self.ball.rad+1):
+                collision_statement = "bottom"
                 self.ball.vel_y *= -1
+                curr_y_vel *= -1
+
             # check collision with top of screen
-            if line_circle(0 - self.ball.vel_x, 0 - self.ball.vel_y,
-                           pyxel.width + self.ball.vel_x, 0,
+            if line_circle(0, 0,
+                           pyxel.width, 0,
                            new_ball_pos[0], new_ball_pos[1], self.ball.rad):
+                collision_statement = "top"
                 self.ball.vel_y *= -1
+                curr_y_vel *= -1
 
             self.ball.do_move(x_vel, y_vel)
+            print("Collided with", collision_statement,
+                  "Current location: ", self.ball.x, ",",
+                  self.ball.y, "Direction (x,y):", self.ball.vel_x,
+                  self.ball.vel_y, file=file)
 
     def draw(self):
         pyxel.cls(0)
+        # pyxel.rect(0,0,120,120,14)
+        marker_space = 4
+        marker_length = 6
+        marker_width = 0
+        box = marker_length + marker_space
+        for i in range(pyxel.height//box):
+            starting_y_pos = i * box
+            starting_x_pos = pyxel.width / 2 - marker_width / 2
+            pyxel.rect(starting_x_pos, starting_y_pos,
+                       starting_x_pos + marker_width,
+                       starting_y_pos + marker_length, 7)
         self.player_paddle.draw()
         self.enemy_paddle.draw()
         self.ball.draw()
@@ -99,8 +125,8 @@ class Ball:
     def draw(self):
         pyxel.circ(self.x, self.y, self.rad, 7)
 
-    def get_next_pos(self):
-        return [self.x + self.vel_x, self.y + self.vel_y]
+    def get_next_pos(self, x, y):
+        return [self.x + x, self.y + y]
 
     def change_velocity(self):
         pass
@@ -160,7 +186,7 @@ def line_point(x1, y1, x2, y2, px, py):
     return d1 + d2 >= line_len - buffer and d1 + d2 <= line_len + buffer
 
 
-def line_circle(x1, x2, y1, y2, cx, cy, cr):
+def line_circle(x1, y1, x2, y2, cx, cy, cr):
     inside1 = point_circle(x1, y1, cx, cy, cr)
     inside2 = point_circle(x2, y2, cx, cy, cr)
     if inside1 or inside2:
@@ -169,8 +195,9 @@ def line_circle(x1, x2, y1, y2, cx, cy, cr):
     line_len = dist(x1, x2, y1, y2)
 
     dot = (((cx - x1) * (x2 - x1)) + (cy - y1) * (y2 - y1)) \
-        / line_len**2
+        / line_len**2  # closest point on the line relative to the circle
 
+# the closest x value that may or may not be on the line segment
     closestX = x1 + (dot * (x2 - x1))
     closestY = y1 + (dot * (y2 - y1))
 
@@ -188,4 +215,7 @@ def dist(x1, y1, x2, y2):
     return math.sqrt((distX**2) + (distY**2))
 
 
-App()
+if __name__ == "__main__":
+    file = open("debug.txt", "w")
+    App()
+    file.close()
