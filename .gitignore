@@ -107,4 +107,4 @@ venv.bak/
 .idea/
 
 # Debug file
-debug.txt
+*/debug.txt

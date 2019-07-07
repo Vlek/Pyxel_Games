@@ -216,6 +216,6 @@ def dist(x1, y1, x2, y2):
 
 
 if __name__ == "__main__":
-    file = open("debug.txt", "w")
+    file = open("./Pong/debug.txt", "w")
     App()
     file.close()
