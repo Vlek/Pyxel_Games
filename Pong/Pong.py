@@ -10,6 +10,7 @@ class App:
         self.paddle_width = 5
         self.paddle_height = 20
         self.paddle_speed = 1
+        # starts at middle of screen (60px)
         self.paddle_start_height = pyxel.height / 2 - self.paddle_height / 2
 
         # player
@@ -21,7 +22,8 @@ class App:
                                    self.paddle_width, self.paddle_height)
 
         # ball
-        self.ball = Ball(pyxel.width/2, pyxel.height/2, 2)
+        # self.ball = Ball(pyxel.width/2, pyxel.height/2, 2)
+        self.ball = Ball(10, 75, 2)
 
         # run
         pyxel.run(self.update, self.draw)
@@ -59,12 +61,15 @@ class App:
                 y_vel = -1
 
             new_ball_pos = self.ball.get_next_pos(x_vel, y_vel)
+            ball_x = new_ball_pos[0]
+            ball_y = new_ball_pos[1]
+            ball_r = self.ball.rad+1  # may need to double check
 
             collision_statement = "No collision"
 
             # check collision with bottom of screen
             if line_circle(0, pyxel.height, pyxel.width, pyxel.height,
-                           new_ball_pos[0], new_ball_pos[1], self.ball.rad+1):
+                           ball_x, ball_y, ball_r):
                 collision_statement = "bottom"
                 self.ball.vel_y *= -1
                 curr_y_vel *= -1
@@ -72,8 +77,36 @@ class App:
             # check collision with top of screen
             if line_circle(0, 0,
                            pyxel.width, 0,
-                           new_ball_pos[0], new_ball_pos[1], self.ball.rad):
+                           ball_x, ball_y, ball_r):
                 collision_statement = "top"
+                self.ball.vel_y *= -1
+                curr_y_vel *= -1
+
+            # paddle collison top
+            if line_circle(self.player_paddle.x, self.player_paddle.y,
+                           self.player_paddle.x + self.player_paddle.width,
+                           self.player_paddle.y, ball_x, ball_y, ball_r):
+                collision_statement = "player paddle top"
+                self.ball.vel_y *= -1
+                curr_y_vel *= -1
+
+            # paddle collison bottom
+            if line_circle(self.player_paddle.x,
+                           self.player_paddle.y + self.player_paddle.height,
+                           self.player_paddle.x + self.player_paddle.width,
+                           self.player_paddle.y + self.player_paddle.height,
+                           ball_x, ball_y, ball_r):
+                collision_statement = "player paddle bottom"
+                self.ball.vel_y *= -1
+                curr_y_vel *= -1
+
+            # paddle collison right (top, middle, bottom)
+            if line_circle(self.player_paddle.x,
+                           self.player_paddle.y + self.player_paddle.height,
+                           self.player_paddle.x + self.player_paddle.width,
+                           self.player_paddle.y + self.player_paddle.height,
+                           ball_x, ball_y, ball_r):
+                collision_statement = "player paddle bottom"
                 self.ball.vel_y *= -1
                 curr_y_vel *= -1
 
@@ -119,8 +152,8 @@ class Ball:
         self.y = y
         self.rad = r
 
-        self.vel_x = 0
-        self.vel_y = 1
+        self.vel_x = -1
+        self.vel_y = -1
 
     def draw(self):
         pyxel.circ(self.x, self.y, self.rad, 7)
