@@ -10,6 +10,7 @@ class App:
         self.paddle_width = 5
         self.paddle_height = 20
         self.paddle_speed = 1
+
         # starts at middle of screen (60px)
         self.paddle_start_height = pyxel.height / 2 - self.paddle_height / 2
 
@@ -23,20 +24,24 @@ class App:
 
         # ball
         # self.ball = Ball(pyxel.width/2, pyxel.height/2, 2)
-        self.ball = Ball(10, 75, 2)
+        self.ball = Ball(25, 90, 2)
 
         # run
         pyxel.run(self.update, self.draw)
 
     def update(self):  # check buttons
         # player movement
-        if pyxel.btn(pyxel.KEY_DOWN) and self.player_paddle.y + \
-                self.paddle_height + self.paddle_speed < pyxel.height:
-            # add paddle speed to paddle height to keep pixel from going off
-            # screen
-            self.player_paddle.y += self.paddle_speed
-        if pyxel.btn(pyxel.KEY_UP) and self.player_paddle.y > 0:
-            self.player_paddle.y -= self.paddle_speed
+        self.player_paddle.state = 0  # initializing state each update.
+        if not(pyxel.btn(pyxel.KEY_DOWN) and pyxel.btn(pyxel.KEY_UP)):
+            if pyxel.btn(pyxel.KEY_DOWN) and self.player_paddle.y + \
+                    self.paddle_height + self.paddle_speed < pyxel.height:
+                # add paddle speed to paddle height to keep pixel from going
+                # off screen
+                self.player_paddle.y += self.paddle_speed
+                self.player_paddle.state = 1
+            if pyxel.btn(pyxel.KEY_UP) and self.player_paddle.y > 0:
+                self.player_paddle.y -= self.paddle_speed
+                self.player_paddle.state = -1
 
         # ball movement
         curr_x_vel = self.ball.vel_x  # total number of movements we can make
@@ -101,12 +106,28 @@ class App:
                 curr_y_vel *= -1
 
             # paddle collison right (top, middle, bottom)
-            if line_circle(self.player_paddle.x,
-                           self.player_paddle.y + self.player_paddle.height,
+            top_player_paddle_y1 = self.paddle_start_height
+            top_player_paddle_y2 = self.paddle_start_height + \
+                self.paddle_height * .2
+
+            middle_player_paddle_y1 = top_player_paddle_y2
+            middle_player_paddle_y2 = top_player_paddle_y2 + \
+                self.paddle_height * .6
+
+            bottom_player_paddle_y1 = middle_player_paddle_y2
+            bottom_player_paddle_y2 = self.paddle_start_height + \
+                self.player_paddle.height
+
+            # top
+            if line_circle(self.player_paddle.x + self.player_paddle.width,
+                           top_player_paddle_y1,
                            self.player_paddle.x + self.player_paddle.width,
-                           self.player_paddle.y + self.player_paddle.height,
+                           top_player_paddle_y2,
                            ball_x, ball_y, ball_r):
-                collision_statement = "player paddle bottom"
+                collision_statement = "player paddle top right"
+                if self.player_paddle.state == -1:
+                    self.ball.vel_x += 1
+
                 self.ball.vel_y *= -1
                 curr_y_vel *= -1
 
@@ -114,7 +135,8 @@ class App:
             print("Collided with", collision_statement,
                   "Current location: ", self.ball.x, ",",
                   self.ball.y, "Direction (x,y):", self.ball.vel_x,
-                  self.ball.vel_y, file=file)
+                  self.ball.vel_y, "Paddle State: ", self.player_paddle.state,
+                  file=file)
 
     def draw(self):
         pyxel.cls(0)
@@ -140,6 +162,11 @@ class Paddle:  # 5 x 20 paddle size white
         self.y = y
         self.height = h
         self.width = w
+        # 0 = not moving, 1 = moving down, -1 = moving up
+        self.state = 0
+
+    def change_state(self, new_state):
+        self.state = new_state
 
     def draw(self):
         pyxel.rect(self.x, self.y, self.x + self.width,
@@ -161,8 +188,10 @@ class Ball:
     def get_next_pos(self, x, y):
         return [self.x + x, self.y + y]
 
-    def change_velocity(self):
-        pass
+    def change_velocity(self, x, y):
+        if self.vel_x < 0:
+            x *= -1
+        self.vel_x += x
 
     def do_move(self, x, y):
         self.x += x
