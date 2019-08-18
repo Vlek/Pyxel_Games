@@ -2,7 +2,7 @@ import pyxel
 import math
 
 
-class App:
+class Pong:
     def __init__(self):
         pyxel.init(120, 120)
 
@@ -24,7 +24,7 @@ class App:
 
         # ball
         # self.ball = Ball(pyxel.width/2, pyxel.height/2, 2)
-        self.ball = Ball(25, 90, 2)
+        self.ball = Ball(25, 70, 2)
 
         # run
         pyxel.run(self.update, self.draw)
@@ -125,8 +125,9 @@ class App:
                            top_player_paddle_y2,
                            ball_x, ball_y, ball_r):
                 collision_statement = "player paddle top right"
-                if self.player_paddle.state == -1:
-                    self.ball.vel_x += 1
+                # if self.player_paddle.state == -1:
+                # self.ball.vel_x += 1
+                self.ball.change_velocity(1)
 
                 self.ball.vel_y *= -1
                 curr_y_vel *= -1
@@ -188,14 +189,16 @@ class Ball:
     def get_next_pos(self, x, y):
         return [self.x + x, self.y + y]
 
-    def change_velocity(self, x, y):
-        if self.vel_x < 0:
-            x *= -1
-        self.vel_x += x
+    def change_velocity(self, x, y=0):
+        self.vel_x = self.get_sign(x) * (abs(self.vel_x) + x)
+        self.vel_y = self.get_sign(y) * (abs(self.vel_y) + y)
 
     def do_move(self, x, y):
         self.x += x
         self.y += y
+
+    def get_sign(self, num):
+        return -1 if num < 0 else 1
 
 
 def point_point(x1: int, y1: int, x2: int, y2: int) -> bool:
@@ -279,5 +282,5 @@ def dist(x1, y1, x2, y2):
 
 if __name__ == "__main__":
     file = open("./Pong/debug.txt", "w")
-    App()
+    Pong()
     file.close()
