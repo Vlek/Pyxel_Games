@@ -144,14 +144,13 @@ class Pong:
         # pyxel.rect(0,0,120,120,14)
         marker_space = 4
         marker_length = 6
-        marker_width = 0
+        marker_width = 1
         box = marker_length + marker_space
         for i in range(pyxel.height//box):
             starting_y_pos = i * box
             starting_x_pos = pyxel.width / 2 - marker_width / 2
-            pyxel.rect(starting_x_pos, starting_y_pos,
-                       starting_x_pos + marker_width,
-                       starting_y_pos + marker_length, 7)
+            pyxel.rect(starting_x_pos, starting_y_pos, marker_width,
+                       marker_length, 7)
         self.player_paddle.draw()
         self.enemy_paddle.draw()
         self.ball.draw()
@@ -170,8 +169,7 @@ class Paddle:  # 5 x 20 paddle size white
         self.state = new_state
 
     def draw(self):
-        pyxel.rect(self.x, self.y, self.x + self.width,
-                   self.y + self.height, 7)
+        pyxel.rect(self.x, self.y, self.width, self.height, 7)
 
 
 class Ball:
