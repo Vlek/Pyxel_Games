@@ -88,22 +88,22 @@ class Pong:
                 curr_y_vel *= -1
 
             # paddle collison top
-            if line_circle(self.player_paddle.x, self.player_paddle.y,
-                           self.player_paddle.x + self.player_paddle.width,
-                           self.player_paddle.y, ball_x, ball_y, ball_r):
-                collision_statement = "player paddle top"
-                self.ball.vel_y *= -1
-                curr_y_vel *= -1
+            # if line_circle(self.player_paddle.x, self.player_paddle.y,
+            #                self.player_paddle.x + self.player_paddle.width,
+            #                self.player_paddle.y, ball_x, ball_y, ball_r):
+            #     collision_statement = "player paddle top"
+            #     self.ball.vel_y *= -1
+            #     curr_y_vel *= -1
 
             # paddle collison bottom
-            if line_circle(self.player_paddle.x,
-                           self.player_paddle.y + self.player_paddle.height,
-                           self.player_paddle.x + self.player_paddle.width,
-                           self.player_paddle.y + self.player_paddle.height,
-                           ball_x, ball_y, ball_r):
-                collision_statement = "player paddle bottom"
-                self.ball.vel_y *= -1
-                curr_y_vel *= -1
+            # if line_circle(self.player_paddle.x,
+            #                self.player_paddle.y + self.player_paddle.height,
+            #                self.player_paddle.x + self.player_paddle.width,
+            #                self.player_paddle.y + self.player_paddle.height,
+            #                ball_x, ball_y, ball_r):
+            #     collision_statement = "player paddle bottom"
+            #     self.ball.vel_y *= -1
+            #     curr_y_vel *= -1
 
             # paddle collison right (top, middle, bottom)
             top_player_paddle_y1 = self.paddle_start_height
