@@ -108,3 +108,6 @@ venv.bak/
 
 # Debug file
 */debug.txt
+
+# Notes file with Features and Plans
+/PongGamePlan.txt
