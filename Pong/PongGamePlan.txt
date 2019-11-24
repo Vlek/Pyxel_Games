@@ -1,0 +1,30 @@
+Pyxel Gameplan: Pong
+
+Next steps:
+	1) Finish Player paddle collisions with the ball
+		~Won't need top and bottom paddle collisions since the pong ball shouldn't collide
+		 with the top anyway
+		~Have the ball increase by a factor of .33 when it reaches the edge most portions of 
+		 the paddle
+		~The ball will move in a different direction from where it originally traveled
+			I.E) if the ball came from bottom right and travels top left and hits the
+				bottom of the paddle, the ball should continue traveling in the +y	
+				direction, but if it hits the top of the paddle, it should travel in 
+				the -y direction
+	2) Implement enemy paddle colisions with the ball
+		~Mimics the same properties of the player paddle
+	3) Create a reset function that replaces the ball in the center of the screen once the ball reaches
+	    one of the sides
+	4) Develop an AI that allows for the player to play against the computer
+		~Potentially could be an attempt to line up the center of the paddle with the ball?
+	5) Develop a counter to keep track of the game points.
+		~Play to 5 for now.
+Potential Features:
+	-starting menu
+	-computer vs computer mode
+	-endless mode?
+
+Plans for today:
+	1) Refamiliarize myself with the code
+	2) Make some QOL improvements
+	3) Potentially refactor the code

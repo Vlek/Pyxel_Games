@@ -4,25 +4,28 @@ import math
 
 class Pong:
     def __init__(self):
-        pyxel.init(120, 120)
+        pyxel.init(120, 120, caption="Pong")
 
-        # inits
+        # inits for the player paddle in number of pixels the window contains.
         self.paddle_width = 5
         self.paddle_height = 20
         self.paddle_speed = 1
 
-        # starts at middle of screen (60px)
+        # starts draw of paddle 10px from center of screen (50px),
+        # paddle height divided by 2 used to draw the paddle from the center
+        # minus half the paddle height so the paddle looks centered in the
+        # middle of the screen. is a pyxel rectangle
         self.paddle_start_height = pyxel.height / 2 - self.paddle_height / 2
 
-        # player
+        # player paddle creation
         self.player_paddle = Paddle(5, self.paddle_start_height,
                                     self.paddle_width, self.paddle_height)
 
-        # enemy
+        # enemy paddle creation
         self.enemy_paddle = Paddle(110, self.paddle_start_height,
                                    self.paddle_width, self.paddle_height)
 
-        # ball
+        # ball creation. Starting position is dead center of the screen.
         # self.ball = Ball(pyxel.width/2, pyxel.height/2, 2)
         self.ball = Ball(25, 70, 2)
 
